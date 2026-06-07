@@ -340,6 +340,8 @@ function renderGrid() {
       </div>`;
     card.querySelector('.brand').textContent = it.brand;
     card.querySelector('.name').textContent = it.name;
+    // 游標停在卡片上時顯示完整品名
+    card.title = it.name + (it.nameEn ? '\n' + it.nameEn : '');
     if (it.img) card.querySelector('img').src = it.img;
     grid.appendChild(card);
   });
