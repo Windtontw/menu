@@ -149,6 +149,17 @@
     letter-spacing: 0.02em;
   }
   .item .price span { font-size: 11px; font-weight: 400; color: var(--text-light); margin-right: 3px; }
+  /* ── 快取提示 ── */
+  .cache-note {
+    background: #fdf6e3;
+    border: 1px solid #f0e6c8;
+    color: #8a6d1a;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 12.5px;
+    text-align: center;
+  }
   /* ── 狀態 ── */
   .status {
     text-align: center;
@@ -236,9 +247,26 @@ async function load() {
       .filter(it => it.name && it.live !== 'N');
     if (!items.length) throw new Error('empty');
     render();
+    // 成功載入後快取一份，之後若連線失敗可暫用
+    try {
+      localStorage.setItem('fc_cache', JSON.stringify({ t: Date.now(), items }));
+    } catch (e) { /* 無痕模式等情況忽略 */ }
   } catch (e) {
-    document.getElementById('status').textContent =
-      '價目表暫時無法載入，請通知店員，謝謝！';
+    // 載入失敗 → 改用上次成功的快取資料
+    let cached = null;
+    try { cached = JSON.parse(localStorage.getItem('fc_cache')); } catch (e2) {}
+    if (cached && Array.isArray(cached.items) && cached.items.length) {
+      items = cached.items;
+      render();
+      const note = document.createElement('div');
+      note.className = 'cache-note';
+      const d = new Date(cached.t);
+      note.textContent = `連線異常，目前顯示 ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} 的價目表，正確價格請洽店員`;
+      document.querySelector('main').prepend(note);
+    } else {
+      document.getElementById('status').textContent =
+        '價目表暫時無法載入，請通知店員，謝謝！';
+    }
   }
 }
 
