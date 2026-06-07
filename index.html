@@ -195,6 +195,23 @@
     max-height: 88vh;
     overflow: auto;
     cursor: pointer;
+    position: relative;
+  }
+  .m-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    font-size: 15px;
+    line-height: 32px;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
   }
   .modal .m-ph {
     aspect-ratio: 1/1;
@@ -243,6 +260,7 @@
 
 <div class="modal-bg" id="modalBg">
   <div class="modal">
+    <button class="m-close" aria-label="關閉">✕</button>
     <div class="m-ph"><img id="mImg" alt=""></div>
     <div class="m-info">
       <div class="m-brand" id="mBrand"></div>
