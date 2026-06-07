@@ -336,12 +336,10 @@ function renderGrid() {
       <div class="info">
         <div class="brand"></div>
         <div class="name"></div>
-        <div class="sub"></div>
         <div class="price"><span>NT$</span>${price}</div>
       </div>`;
     card.querySelector('.brand').textContent = it.brand;
     card.querySelector('.name').textContent = it.name;
-    card.querySelector('.sub').textContent = it.nameEn;
     if (it.img) card.querySelector('img').src = it.img;
     grid.appendChild(card);
   });
