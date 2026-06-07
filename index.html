@@ -175,6 +175,51 @@
     color: #c0c0bb;
     letter-spacing: 0.15em;
   }
+  /* ── 點卡片放大視窗 ── */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 18px;
+    max-width: 420px;
+    width: 100%;
+    max-height: 88vh;
+    overflow: auto;
+    cursor: pointer;
+  }
+  .modal .m-ph {
+    aspect-ratio: 1/1;
+    background: #f2f2ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal .m-ph img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .modal .m-info { padding: 16px 20px 22px; }
+  .modal .m-brand {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-light);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .modal .m-name {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+  .modal .m-price { font-size: 19px; font-weight: 700; }
+  .modal .m-price span { font-size: 12px; font-weight: 400; color: var(--text-light); margin-right: 4px; }
 </style>
 </head>
 <body>
@@ -195,6 +240,17 @@
 </main>
 
 <footer>價格如有異動，以現場標示為準</footer>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="m-ph"><img id="mImg" alt=""></div>
+    <div class="m-info">
+      <div class="m-brand" id="mBrand"></div>
+      <div class="m-name" id="mName"></div>
+      <div class="m-price"><span>NT$</span><b id="mPrice"></b></div>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ════════ 設定 ════════ */
@@ -340,12 +396,26 @@ function renderGrid() {
       </div>`;
     card.querySelector('.brand').textContent = it.brand;
     card.querySelector('.name').textContent = it.name;
-    // 游標停在卡片上時顯示完整品名
-    card.title = it.name + (it.nameEn ? '\n' + it.nameEn : '');
+    card.title = it.name;               // 游標提示完整品名
+    card.style.cursor = 'pointer';
+    card.onclick = () => openModal(it, price);  // 點卡片放大
     if (it.img) card.querySelector('img').src = it.img;
     grid.appendChild(card);
   });
 }
+
+/* ════════ 放大視窗 ════════ */
+function openModal(it, price) {
+  const img = document.getElementById('mImg');
+  img.src = it.img || '';
+  img.style.display = it.img ? '' : 'none';
+  document.getElementById('mBrand').textContent = it.brand;
+  document.getElementById('mName').textContent = it.name;   // 完整日文品名
+  document.getElementById('mPrice').textContent = price;
+  document.getElementById('modalBg').classList.add('open');
+}
+document.getElementById('modalBg').onclick = () =>
+  document.getElementById('modalBg').classList.remove('open');
 
 load();
 </script>
