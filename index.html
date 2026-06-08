@@ -320,6 +320,7 @@ async function load() {
       })
       .filter(it => it.name && it.live !== 'N');
     if (!items.length) throw new Error('empty');
+    applyUrlFilters();
     render();
     // 成功載入後快取一份，之後若連線失敗可暫用
     try {
@@ -331,6 +332,7 @@ async function load() {
     try { cached = JSON.parse(localStorage.getItem('fc_cache')); } catch (e2) {}
     if (cached && Array.isArray(cached.items) && cached.items.length) {
       items = cached.items;
+      applyUrlFilters();
       render();
       const note = document.createElement('div');
       note.className = 'cache-note';
@@ -341,6 +343,18 @@ async function load() {
       document.getElementById('status').textContent =
         '價目表暫時無法載入，請通知店員，謝謝！';
     }
+  }
+}
+
+/* 依網址參數預選分區（分區 QR code 用，例 ?cat=sofubi 或 ?brand=MEDICOM TOY） */
+function applyUrlFilters() {
+  const qp = new URLSearchParams(location.search);
+  const qCat = (qp.get('cat') || '').trim().toLowerCase();
+  const qBrand = (qp.get('brand') || '').trim();
+  if (qCat && items.some(i => i.cat === qCat)) curCat = qCat;
+  if (qBrand) {
+    const hit = items.find(i => i.brand.toLowerCase() === qBrand.toLowerCase());
+    if (hit) curBrand = hit.brand;
   }
 }
 
