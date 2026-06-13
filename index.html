@@ -408,6 +408,14 @@ function renderGrid() {
   const list = items.filter(i =>
     (curCat === 'all' || i.cat === curCat) &&
     (curBrand === 'all' || i.brand === curBrand));
+  // 排序：先依類別順序，再依品牌，最後同品牌內依價格由低到高（無價格者排最後）
+  const catOrder = Object.keys(CAT_LABELS);
+  const catRank = c => { const i = catOrder.indexOf(c); return i === -1 ? 999 : i; };
+  const priceVal = p => { const n = Number(p); return isNaN(n) ? Infinity : n; };
+  list.sort((a, b) =>
+    catRank(a.cat) - catRank(b.cat) ||
+    a.brand.localeCompare(b.brand) ||
+    priceVal(a.price) - priceVal(b.price));
   const grid = document.getElementById('grid');
   const status = document.getElementById('status');
   grid.innerHTML = '';
